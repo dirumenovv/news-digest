@@ -1,0 +1,41 @@
+name: Daily Digest
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # every day at 06:00 UTC (GitHub cron always uses UTC)
+  workflow_dispatch: # lets you run it manually from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Write config from secret
+        env:
+          DIGEST_CONFIG: ${{ secrets.DIGEST_CONFIG }}
+        run: printf '%s' "$DIGEST_CONFIG" > config.json
+
+      - name: Send digest
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node src/index.js

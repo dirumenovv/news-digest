@@ -1,0 +1,19 @@
+{
+  "title": "My Morning Digest",
+  "recipients": ["you@example.com"],
+  "schedule": { "cron": "0 7 * * *", "timezone": "Europe/Sofia" },
+  "maxItemsPerSource": 5,
+  "sources": {
+    "rss": [
+      { "name": "Hacker News", "url": "https://news.ycombinator.com/rss" },
+      { "name": "Node.js Blog", "url": "https://nodejs.org/en/feed/blog.xml", "maxItems": 3 }
+    ],
+    "weather": { "locationName": "Sofia", "latitude": 42.6977, "longitude": 23.3219 },
+    "github": { "repos": ["nodejs/node"] }
+  },
+  "filters": {
+    "includeKeywords": [],
+    "excludeKeywords": ["sponsored"]
+  },
+  "summarizer": { "enabled": false, "maxWords": 40 }
+}
